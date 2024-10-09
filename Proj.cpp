@@ -1,9 +1,13 @@
 #include "DirectX.h"
-
+// Define a type for VertexPositionNormalTexture used by DirectX
 using VertexType = DirectX::VertexPositionNormalTexture;
+
+// Constants for window size and framerate
 const int Width = 800;
 const int Height = 600;
 const float framerate = 30;
+
+// Game state variables
 bool gameover;
 int game_start_time;
 int game_current_time;
@@ -14,23 +18,33 @@ int  game_play_time_in_hour_and_minutes;
 int seconds_count;
 int minutes_count;
 int hours_count;
+
+// Camera and game objects
 Camera camera;
 Shape3D ground;
 Model3D car;
 Model2D aim;
+
+// Unique pointers for managing resources
 std::unique_ptr<CommonStates> states;
+
+// Constants for number of extra lives, bomb, and other car objects
 const int extra_number = 2;
 int extra_left = 2;
 Model3D extra[extra_number];
 bool valid_extra[extra_number];
+
 const int bomb_number = 2;
 int bomb_left = 2;
 Model3D bomb[bomb_number];
 bool valid_bomb[bomb_number];
+
 const int other_number = 24;
 int other_left = 24;
 Model3D other[other_number];
 bool valid_other[other_number];
+
+// Variables for tracking shots and explosions
 int last_boom = -1;
 const int number_of_shots = 100;
 int shots_left = 100;
@@ -38,13 +52,19 @@ Model3D shot[number_of_shots];
 bool valid_shot[number_of_shots];
 Model2D boom[number_of_shots];
 bool boom_valid[number_of_shots];
+
+
 int last_shot = -1;
 int die = -1;
 int score = 0;
-int game_state = 1;
+int game_state = 1; // Tracks the levels
+
+// Input devices
 Keyboard::State kb;
 Mouse::State mb;
 Mouse::ButtonStateTracker mousetracker;
+
+// Unique pointers for sound effects
 std::unique_ptr<SpriteFont> spriteFont;
 std::unique_ptr<SoundEffect> gunfire;
 std::unique_ptr<SoundEffect> explode;
@@ -52,11 +72,15 @@ std::unique_ptr<SoundEffect> sound1;
 std::unique_ptr<SoundEffect> sound2;
 std::unique_ptr<SoundEffect> bgmusic;
 
+// Function to update extra car objects
 void Updateextra()
 {
+    // Rotate extra objects
     for (int i = 0; i < extra_number; i++)
     {
-        XMMATRIX rotate = XMMatrixRotationY(extra[i].yrot);
+        XMMATRIX rotate = XMMatrixRotationY(extra[i].yrot); // Update rotation angle
+
+        // Update position based on rotation matrix
         Vector3 pos;
         pos.x = extra[i].x;
         pos.y = extra[i].y;
@@ -67,6 +91,7 @@ void Updateextra()
         extra[i].yrot += 0.1;
     }
 
+    // Check collision with car and handle consequences
     for (int i = 0; i < extra_number; i++)
     {
         if (valid_extra[i] && CheckModel3DCollided(car, extra[i]) && die < 0)
@@ -79,8 +104,10 @@ void Updateextra()
     }
 }
 
+// Function to update bomb objects (similar logic to Updateextra)
 void Updatebomb()
 {
+    // ... (similar code as Updateextra)
     for (int i = 0; i < bomb_number; i++)
     {
         XMMATRIX rotate = XMMatrixRotationY(bomb[i].yrot);
@@ -113,6 +140,7 @@ void Updatebomb()
     }
 }
 
+// Function to update car position and direction based on keyboard input
 void Updatecar()
 {
     Vector3 carInitDirection(0.0f, 0.0f, -1.0f);
