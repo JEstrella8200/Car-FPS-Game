@@ -17,4 +17,4 @@ You can opne Proj.sln on Visual Studio. Follow the below instructions to make su
 8. Select the path and Press OK
 9. press Apply and then OK
 10. Right-click the Proj solution on the right in the Solution Explorer box
-11. Then press debug
+11. Then press set as Startup Project and now you can press debug to launch the game
